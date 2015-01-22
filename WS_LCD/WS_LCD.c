@@ -19,6 +19,8 @@
 uint8_t lcdRow = 0;
 uint8_t lcdColumn = 0;
 
+//aux_twiInit(void) = &twiInit;
+
 //Oled config defs
 #define oledAddress 0x78
 #define oledRead oledAddress+1

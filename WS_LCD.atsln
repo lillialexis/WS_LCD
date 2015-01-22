@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Atmel Studio Solution File, Format Version 11.00
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "WS_LCD", "WS_LCD\WS_LCD.cppproj", "{98C9D8CE-8EA3-4D63-89DD-67894E1733F9}"
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "WS_LCD", "WS_LCD\WS_LCD.cproj", "{9F276932-8D23-4F91-BCAD-DE673125989D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|AVR = Release|AVR
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{98C9D8CE-8EA3-4D63-89DD-67894E1733F9}.Debug|AVR.ActiveCfg = Debug|AVR
-		{98C9D8CE-8EA3-4D63-89DD-67894E1733F9}.Debug|AVR.Build.0 = Debug|AVR
-		{98C9D8CE-8EA3-4D63-89DD-67894E1733F9}.Release|AVR.ActiveCfg = Release|AVR
-		{98C9D8CE-8EA3-4D63-89DD-67894E1733F9}.Release|AVR.Build.0 = Release|AVR
+		{9F276932-8D23-4F91-BCAD-DE673125989D}.Debug|AVR.ActiveCfg = Debug|AVR
+		{9F276932-8D23-4F91-BCAD-DE673125989D}.Debug|AVR.Build.0 = Debug|AVR
+		{9F276932-8D23-4F91-BCAD-DE673125989D}.Release|AVR.ActiveCfg = Release|AVR
+		{9F276932-8D23-4F91-BCAD-DE673125989D}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

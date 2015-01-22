@@ -1,8 +1,18 @@
+/*
+ * WS_LCD.h
+ *
+ * Created: 1/21/2015 4:30:54 PM
+ *  Author: dev-box
+ */ 
+
 #include <stddef.h>
 #include <avr/io.h>
 
-#ifndef __INCLUDE_WS_LCD__
-#define __INCLUDE_WS_LCD__
+
+#ifndef WS_LCD_H_
+#define WS_LCD_H_
+
+
 
 void twiInit(void);
 void twiStart(void);
@@ -18,4 +28,4 @@ void lcdInvert(uint8_t data);
 void lcdWriteChar(uint8_t data);
 void lcdPrint(const char data[18]);
 
-#endif __INCLUDE_WS_LCD__
+#endif /* WS_LCD_H_ */
