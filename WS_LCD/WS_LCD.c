@@ -19,8 +19,6 @@
 uint8_t lcdRow    = 0;
 uint8_t lcdColumn = 0;
 
-//aux_twiInit(void) = &twiInit;
-
 // Oled config defs
 #define OLED_ADDRESS    0x78
 #define OLED_READ       oledAddress+1
@@ -36,7 +34,7 @@ uint8_t lcdColumn = 0;
 #define CONTRAST_LEVEL  0xaf // was 0xcf in SSD103.cpp
 #define VCOM_DETECT     0x20 // was 0x40 in SSD103.cpp
 
-#if (lcdResolution == 12864)
+#if (LCD_RESOLUTION == 12864)
 	#define LCD_HEIGHT         64
 	#define LCD_WIDTH          128
 	#define MAX_ROW            8
@@ -45,7 +43,7 @@ uint8_t lcdColumn = 0;
 	#define DISPLAY_START_LINE 0
 	#define SEGMENT_REMAP      0xA0 | 0x1
 	#define COM_PIN_RATIO      0x12
-#elif (lcdResolution == 9616)
+#elif (LCD_RESOLUTION == 9616)
 	#define LCD_HEIGHT         16
 	#define LCD_WIDTH          96
 	#define MAX_ROW            2
@@ -187,6 +185,8 @@ void twiSendCmd(uint8_t fillData)
 
 void lcdInit(void)
 { 	
+	twiInit();
+	
 	//*********** 96x16 / 128x64 ****************
 	twiStart();
 	twiSend(OLED_ADDRESS);
