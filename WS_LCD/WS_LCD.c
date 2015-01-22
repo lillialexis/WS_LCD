@@ -13,45 +13,47 @@
 #include <stddef.h>
 #include <string.h>
 
-//SSD1306 display driver
+// SSD1306 display driver
 //#define lcdResolution 9616 
-#define lcdResolution 12864
-uint8_t lcdRow = 0;
+#define LCD_RESOLUTION 12864
+uint8_t lcdRow    = 0;
 uint8_t lcdColumn = 0;
 
 //aux_twiInit(void) = &twiInit;
 
-//Oled config defs
-#define oledAddress 0x78
-#define oledRead oledAddress+1
-#define oledRun 0xa4
-#define oledOff 0xa5
-#define oledInverse 0xa7
-#define oledNormal 0xa6
-#define oledSleep 0xae
-#define oledActive 0xaf
-#define oledScrollOff 0x2e
-#define oledData 0
-#define contrastLevel 0xaf
+// Oled config defs
+#define OLED_ADDRESS    0x78
+#define OLED_READ       oledAddress+1
+#define OLED_RUN        0xa4
+#define OLED_OFF        0xa5
+#define OLED_INVERSE    0xa7
+#define OLED_NORMAL     0xa6
+#define OLED_SLEEP      0xae
+#define OLED_ACTIVE     0xaf
+#define OLED_SCROLL_OFF 0x2e
+#define OLED_DATA       0
+
+#define CONTRAST_LEVEL  0xaf // was 0xcf in SSD103.cpp
+#define VCOM_DETECT     0x20 // was 0x40 in SSD103.cpp
 
 #if (lcdResolution == 12864)
-	#define lcdHeight 64
-	#define lcdWidth 128
-	#define maxRow 8
-	#define maxColumn 21
-	#define SIXTEEN_VS_SIXTYFOUR 0x3f
+	#define LCD_HEIGHT         64
+	#define LCD_WIDTH          128
+	#define MAX_ROW            8
+	#define MAX_COLUMN         21
+	#define MULTIPLEX_RATIO    0x3f
 	#define DISPLAY_START_LINE 0
-	#define SEGMENT_REMAP 0x1
-	#define COM_PIN_RATIO 0x12
+	#define SEGMENT_REMAP      0xA0 | 0x1
+	#define COM_PIN_RATIO      0x12
 #elif (lcdResolution == 9616)
-	#define lcdHeight 16
-	#define lcdWidth 96
-	#define maxRow 2
-	#define maxColumn 16
-	#define SIXTEEN_VS_SIXTYFOUR 0x0f
+	#define LCD_HEIGHT         16
+	#define LCD_WIDTH          96
+	#define MAX_ROW            2
+	#define MAX_COLUMN         16
+	#define MULTIPLEX_RATIO    0x0f
 	#define DISPLAY_START_LINE 40
-	#define SEGMENT_REMAP 0xa1
-	#define COM_PIN_RATIO 0x02
+	#define SEGMENT_REMAP      0xa1
+	#define COM_PIN_RATIO      0x02
 #endif
 
 // The 7-bit ASCII character set...
@@ -185,42 +187,42 @@ void twiSendCmd(uint8_t fillData)
 
 void lcdInit(void)
 { 	
-	//***********96x16****************
+	//*********** 96x16 / 128x64 ****************
 	twiStart();
-	twiSend(oledAddress);
-	twiSendCmd(oledSleep);  //0xae display off
-	twiSendCmd(0xd5);       //set display clock divide ratio
-		twiSendCmd(0x80);   //set ratio 128x64:80 96x16:f0
-	twiSendCmd(0xa8);       //set multiplex ratio (screen lines 1 to 64)
-		twiSendCmd(SIXTEEN_VS_SIXTYFOUR); // set 16:0x0f 64:0x3f
-	twiSendCmd(0xd3);       //set display offset
-		twiSendCmd(0);      //not offset
-	twiSendCmd(DISPLAY_START_LINE);       //set display start line
-	twiSendCmd(0x8d);       //charge pump control
-		twiSendCmd(0x14);   //0x14:Run 0x10:off
-	twiSendCmd(0xd8);       //set display mode
+	twiSend(OLED_ADDRESS);
+	twiSendCmd(OLED_SLEEP); // 0xae display off
+	twiSendCmd(0xd5);       // set display clock divide ratio
+		twiSendCmd(0x80);   // set ratio 128x64:80 96x16:f0
+	twiSendCmd(0xa8);       // set multiplex ratio (screen lines 1 to 64)
+		twiSendCmd(MULTIPLEX_RATIO); // set 16:0x0f 64:0x3f
+	twiSendCmd(0xd3);       // set display offset
+		twiSendCmd(0);      // not offset
+	twiSendCmd(DISPLAY_START_LINE); // set display start line
+	twiSendCmd(0x8d);       // charge pump control
+		twiSendCmd(0x14);   // 0x14:Run 0x10:off
+	twiSendCmd(0xd8);       // set display mode
 		twiSendCmd(0x05);   // low power
-	twiSendCmd(SEGMENT_REMAP); //--set segment re-map 96 to 1
-	twiSendCmd(0xC8);       //--Set COM Output Scan Direction 16 to 1
-	twiSendCmd(0xda);       //--set com pins hardware configuration
-		twiSendCmd(COM_PIN_RATIO); //set ratio 128x64:0x12 96x16:0x02
-	twiSendCmd(0x81);       //--set contrast control register
-		twiSendCmd(contrastLevel);
-	twiSendCmd(0xd9);       //--set pre-charge period
-		twiSendCmd(0xf1);   //set ratio 128x64:0xf1 96x16:0x22
-	twiSendCmd(0xdb);       //--set vcomh
-		twiSendCmd(0x20);   //--0.77vref
+	twiSendCmd(SEGMENT_REMAP); // --set segment re-map 96 to 1
+	twiSendCmd(0xC8);       // --Set COM Output Scan Direction 16 to 1
+	twiSendCmd(0xda);       // --set com pins hardware configuration
+		twiSendCmd(COM_PIN_RATIO); // set ratio 128x64:0x12 96x16:0x02
+	twiSendCmd(0x81);       // --set contrast control register
+		twiSendCmd(CONTRAST_LEVEL);
+	twiSendCmd(0xd9);       // --set pre-charge period
+		twiSendCmd(0xf1);   // set ratio 128x64:0xf1 96x16:0x22
+	twiSendCmd(0xdb);       // --set vcomh
+		twiSendCmd(VCOM_DETECT); // --0.77vref
 	twiSendCmd(0x20);       // Set Memory Addressing Mode
-		twiSendCmd(0x00);   // 00,Horizontal Addressing Mode;01,Vertical Addressing Mode;10,Page Addressing Mode (RESET);11,Invalid
-	twiSendCmd(oledRun);
-	twiSendCmd(oledNormal);
-	twiSendCmd(oledActive); // --turn on oled panel
+		twiSendCmd(0x00);   // 00, Horizontal Addressing Mode; 01, Vertical Addressing Mode; 10, Page Addressing Mode (RESET); 11, Invalid
+	twiSendCmd(OLED_RUN);
+	twiSendCmd(OLED_NORMAL);
+	twiSendCmd(OLED_ACTIVE); // --turn on oled panel
 	twiStop();
 }
 
 void lcdSendCommand(uint8_t fillData){
 	twiStart();
-	twiSend(oledAddress);
+	twiSend(OLED_ADDRESS);
 	twiSendCmd(fillData);
 	twiStop();
 }
@@ -228,7 +230,7 @@ void lcdSendCommand(uint8_t fillData){
 void lcdSetPos(uint8_t row, uint8_t column)
 {
 	twiStart();
-	twiSend(oledAddress);
+	twiSend(OLED_ADDRESS);
 	twiSendCmd(0xb0+row);
 	twiSendCmd(((column&0xf0)>>4)|0x10); //high column start address or'd 0x10
 	twiSendCmd((column&0x0f)|0x00); //low column start address
@@ -241,19 +243,19 @@ void lcdSetPos(uint8_t row, uint8_t column)
 void lcdFill(uint8_t fillData)
 {
 	uint8_t m,n;
-	for(m=0;m<=maxRow;m++)
+	for(m=0;m<=MAX_ROW;m++)
 	{
 		twiStart();
-		twiSend(oledAddress);
+		twiSend(OLED_ADDRESS);
 		twiSendCmd(0xb0+m);	//page0-page1
 		twiSendCmd(0x10);		//high column start address
 		twiSendCmd(0x00);		//low column start address
 		twiStop();
 		
 		twiStart();
-		twiSend(oledAddress);
+		twiSend(OLED_ADDRESS);
 		twiSend(0x40);		//data
-		for(n=0;n<lcdWidth;n++)
+		for(n=0;n<LCD_WIDTH;n++)
 		{
 			twiSend(fillData);
 		}
@@ -264,15 +266,15 @@ void lcdFill(uint8_t fillData)
 void lcdInvert(uint8_t data) {
 	//twiStart();
 	//twiSend(oledAddress);
-	if (data == 1) {lcdSendCommand(oledInverse);} 
-	else {lcdSendCommand(oledNormal);}
+	if (data == 1) {lcdSendCommand(OLED_INVERSE);} 
+	else {lcdSendCommand(OLED_NORMAL);}
 	//twiStop();
 }
 
 void lcdWriteChar(uint8_t data)
 {	//******************************
 	twiStart();  //move to lcdPrint
-	twiSend(oledAddress);  //move to lcdPrint
+	twiSend(OLED_ADDRESS);  //move to lcdPrint
 	twiSend(0x40); //move to lcdPrint
 	//******************************
 	
@@ -323,11 +325,4 @@ void lcdPrintln(const char data[18]) {
 
 	lcdPrint(data);
 	lcdWriteChar('\n');
-}
-
-int function(void)
-{
-    //TODO:: Please write your application code
-
-    return 0;
 }
