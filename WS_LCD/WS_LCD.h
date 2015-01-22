@@ -26,6 +26,6 @@ void lcdSetPos(uint8_t row, uint8_t column);
 void lcdFill(uint8_t fillData);
 void lcdInvert(uint8_t data);
 void lcdWriteChar(uint8_t data);
+void lcdPrintln(const char data[18]);
 void lcdPrint(const char data[18]);
-
 #endif /* WS_LCD_H_ */

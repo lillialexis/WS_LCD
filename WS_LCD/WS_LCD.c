@@ -14,8 +14,8 @@
 #include <string.h>
 
 //SSD1306 display driver
-#define lcdResolution 9616 
-//#define lcdResolution 12864
+//#define lcdResolution 9616 
+#define lcdResolution 12864
 uint8_t lcdRow = 0;
 uint8_t lcdColumn = 0;
 
@@ -39,11 +39,19 @@ uint8_t lcdColumn = 0;
 	#define lcdWidth 128
 	#define maxRow 8
 	#define maxColumn 21
+	#define SIXTEEN_VS_SIXTYFOUR 0x3f
+	#define DISPLAY_START_LINE 0
+	#define SEGMENT_REMAP 0x1
+	#define COM_PIN_RATIO 0x12
 #elif (lcdResolution == 9616)
 	#define lcdHeight 16
 	#define lcdWidth 96
 	#define maxRow 2
 	#define maxColumn 16
+	#define SIXTEEN_VS_SIXTYFOUR 0x0f
+	#define DISPLAY_START_LINE 40
+	#define SEGMENT_REMAP 0xa1
+	#define COM_PIN_RATIO 0x02
 #endif
 
 // The 7-bit ASCII character set...
@@ -184,18 +192,18 @@ void lcdInit(void)
 	twiSendCmd(0xd5); //set display clock divide ratio
 		twiSendCmd(0x80); //set ratio 128x64:80 96x16:f0
 	twiSendCmd(0xa8); //set multiplex ratio (screen lines 1 to 64)
-		twiSendCmd(0x0f); // set 16:0x0f 64:0x3f
+		twiSendCmd(SIXTEEN_VS_SIXTYFOUR); // set 16:0x0f 64:0x3f
 	twiSendCmd(0xd3);//set display offset
 		twiSendCmd(0);//not offset
-	twiSendCmd(40); //set display start line
+	twiSendCmd(DISPLAY_START_LINE); //set display start line
 	twiSendCmd(0x8d); //charge pump control
 		twiSendCmd(0x14); //0x14:Run 0x10:off
 	twiSendCmd(0xd8); //set display mode
 		twiSendCmd(0x05); // low power
-	twiSendCmd(0xa1);//--set segment re-map 96 to 1
+	twiSendCmd(SEGMENT_REMAP);//--set segment re-map 96 to 1
 	twiSendCmd(0xC8);//--Set COM Output Scan Direction 16 to 1
 	twiSendCmd(0xda);//--set com pins hardware configuration
-		twiSendCmd(0x02); //set ratio 128x64:0x12 96x16:0x02
+		twiSendCmd(COM_PIN_RATIO); //set ratio 128x64:0x12 96x16:0x02
 	twiSendCmd(0x81);//--set contrast control register
 		twiSendCmd(contrastLevel);
 	twiSendCmd(0xd9);//--set pre-charge period
@@ -309,6 +317,12 @@ void lcdPrint(const char data[18]) {
 		lcdWriteChar(data[i]); 
 		i++; 
 	}
+}
+
+void lcdPrintln(const char data[18]) {
+
+	lcdPrint(data);
+	lcdWriteChar('\n');
 }
 
 int function(void)
