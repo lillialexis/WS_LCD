@@ -1,5 +1,2 @@
-WS_LCD/Debug/WS_LCD.o
-WS_LCD/Debug/libWS_LCD.a
-WS_LCD/Debug/makedep.mk
-WS_LCD/Debug/Makefile
-WS_LCD/Debug/WS_LCD.d
+WS_LCD/Debug/*
+Example/Debug/*
