@@ -68,16 +68,16 @@ void lcdInit(void)
 	twiSend(OLED_ADDRESS);
 	twiSendCmd(OLED_SLEEP); // 0xae display off
 	twiSendCmd(0xd5);       // set display clock divide ratio
-		twiSendCmd(0x80);   // set ratio 128x64:80 96x16:f0
+		twiSendCmd(CLOCK_DIVIDE_RATIO);   // set ratio 128x64:80 96x16:f0
 	twiSendCmd(0xa8);       // set multiplex ratio (screen lines 1 to 64)
 		twiSendCmd(MULTIPLEX_RATIO); // set 16:0x0f 64:0x3f
 	twiSendCmd(0xd3);       // set display offset
 		twiSendCmd(0);      // not offset
 	twiSendCmd(DISPLAY_START_LINE); // set display start line
-	twiSendCmd(0x8d);       // charge pump control
-		twiSendCmd(0x14);   // 0x14:Run 0x10:off
-	twiSendCmd(0xd8);       // set display mode
-		twiSendCmd(0x05);   // low power
+	//twiSendCmd(0xd8);       // set display mode
+		//twiSendCmd(0x05);   // low power
+	twiSendCmd(OLED_NORMAL);
+	twiSendCmd(OLED_RUN);
 	twiSendCmd(SEGMENT_REMAP); // --set segment re-map 96 to 1
 	twiSendCmd(0xC8);       // --Set COM Output Scan Direction 16 to 1
 	twiSendCmd(0xda);       // --set com pins hardware configuration
@@ -85,13 +85,13 @@ void lcdInit(void)
 	twiSendCmd(0x81);       // --set contrast control register
 		twiSendCmd(CONTRAST_LEVEL);
 	twiSendCmd(0xd9);       // --set pre-charge period
-		twiSendCmd(0xf1);   // set ratio 128x64:0xf1 96x16:0x22
+		twiSendCmd(PRE_CHARGE_PERIOD);   // set ratio 128x64:0xf1 96x16:0x22
 	twiSendCmd(0xdb);       // --set vcomh
 		twiSendCmd(VCOM_DETECT); // --0.77vref
 	twiSendCmd(0x20);       // Set Memory Addressing Mode
 		twiSendCmd(0x00);   // 00, Horizontal Addressing Mode; 01, Vertical Addressing Mode; 10, Page Addressing Mode (RESET); 11, Invalid
-	twiSendCmd(OLED_RUN);
-	twiSendCmd(OLED_NORMAL);
+	twiSendCmd(0x8d);       // charge pump control
+		twiSendCmd(0x14);   // 0x14:Run 0x10:off
 	twiSendCmd(OLED_ACTIVE); // --turn on oled panel
 	
 	twiStop();
