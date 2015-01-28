@@ -11,7 +11,7 @@
 
 
 #ifndef LCD_RESOLUTION
-//#define lcdResolution 9616
+//#define LCD_RESOLUTION 9616
 #define LCD_RESOLUTION 12864
 #endif
 
@@ -31,29 +31,31 @@
 #define DATA_COMMAND    0x40
 #define HIGH_COL_START_ADDR 0x10
 #define LOW_COL_START_ADDR  0x00
-
-
-#define CONTRAST_LEVEL  0xaf // was 0xcf in SSD103.cpp
-#define VCOM_DETECT     0x20 // was 0x40 in SSD103.cpp
+#define SEGMENT_REMAP      0xA1
+#define DISPLAY_START_LINE 0x40
 
 #if (LCD_RESOLUTION == 12864)
 	#define LCD_HEIGHT         64
 	#define LCD_WIDTH          128
 	#define MAX_ROWS           8
 	#define MAX_COLS           21
-	#define MULTIPLEX_RATIO    0x3f
-	#define DISPLAY_START_LINE 0
-	#define SEGMENT_REMAP      0xA0 | 0x1
+	#define MULTIPLEX_RATIO    0x3F
 	#define COM_PIN_RATIO      0x12
+	#define PRE_CHARGE_PERIOD  0xF1
+	#define CLOCK_DIVIDE_RATIO 0x80
+	#define CONTRAST_LEVEL	   0x80 
+	#define VCOM_DETECT		   0x20 // was 0x20
 #elif (LCD_RESOLUTION == 9616)
 	#define LCD_HEIGHT         16
 	#define LCD_WIDTH          96
 	#define MAX_ROWS           2
 	#define MAX_COLS		   16
-	#define MULTIPLEX_RATIO    0x0f
-	#define DISPLAY_START_LINE 40
-	#define SEGMENT_REMAP      0xa1
+	#define MULTIPLEX_RATIO    0x0F
 	#define COM_PIN_RATIO      0x02
+	#define PRE_CHARGE_PERIOD  0x22
+	#define CLOCK_DIVIDE_RATIO 0xF0
+	#define CONTRAST_LEVEL	   0x80 
+	#define VCOM_DETECT		   0x49 
 #endif
 
 

@@ -8,10 +8,13 @@
 // Header files
 #include <avr/io.h>
 
+#define F_CPU 16000000UL
+
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-#define LCD_RESOLUTION 12864
+//#define LCD_RESOLUTION 12864
+#define LCD_RESOLUTION 9616
 
 #include "../WS_LCD/WS_LCD.h"
 
@@ -108,7 +111,7 @@ void beginTesting()
 	for (uint8_t i = 0; i < strlen(n); i++)
 	{
 		lcdWriteChar(n[i]);
-		_delay_ms(10000);
+		_delay_ms(1000);
 	}
 	
 	_delay_ms(500);
@@ -164,7 +167,7 @@ int main(void)
 		void (*currentTest)(void) = tests[i];
 		currentTest();
 		
-		_delay_ms(20000);
+		_delay_ms(1000);
 		
 		// TEAR-DOWN METHOD IS AUTOMATICALLY CALLED AFTER EACH TEST
 		tearDown();
