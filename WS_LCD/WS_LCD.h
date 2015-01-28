@@ -67,6 +67,7 @@
 	BOOL lcdGetInvert();
 		
 	void lcdFill(uint8_t fillData);
+	void lcdFillChar(uint8_t fillData);
 	
 	void lcdClearLine(uint8_t line);
 	void lcdClearScreen();	

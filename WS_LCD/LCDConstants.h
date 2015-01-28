@@ -29,6 +29,8 @@
 
 #define COMMAND_COMMAND 0x80
 #define DATA_COMMAND    0x40
+#define CURSOR_COMMAND  0x00 // To make a blinking cursor, like data, but doesn't move column
+
 #define HIGH_COL_START_ADDR 0x10
 #define LOW_COL_START_ADDR  0x00
 #define SEGMENT_REMAP      0xA1
@@ -59,10 +61,18 @@
 #endif
 
 
+#define SMALL_FONT_CHARACTER_W 5
+#define SMALL_FONT_CHARACTER_H 8
 
+#define H_PADDING 1
+//#define V_PADDING 0
+
+#define ASCII_OFFSET_LOW  0x20
+#define ASCII_OFFSET_HIGH 0x7e
 
 // The 7-bit ASCII character set...
 const PROGMEM uint8_t font5x8[][5] = {
+	{ 0x00, 0x00, 0x00, 0x00, 0x00 },  // 20 Space
 	{ 0x00, 0x00, 0x5f, 0x00, 0x00 },  // 21 !
 	{ 0x00, 0x07, 0x00, 0x07, 0x00 },  // 22 "
 	{ 0x14, 0x7f, 0x14, 0x7f, 0x14 },  // 23 #
@@ -159,5 +169,6 @@ const PROGMEM uint8_t font5x8[][5] = {
 	{ 0x10, 0x08, 0x08, 0x10, 0x08 },  // 7e ~
 };
 
-
+const PROGMEM uint8_t unknown5x8[5] = { 0x7f, 0x41, 0x41, 0x41, 0x7f }; // []
+	
 #endif /* LCDCONSTANTS_H_ */

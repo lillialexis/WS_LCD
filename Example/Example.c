@@ -85,7 +85,7 @@ void test4()
 
 void setUp(uint8_t fill)
 {
-	lcdFill(fill);
+	lcdFillChar(fill);
 }
 
 void tearDown()
@@ -106,12 +106,16 @@ void beginTesting()
 
 	_delay_ms(500);
 	
-	uint8_t n[] = {'3', '2', '1'};
+	uint8_t n[] = "3... 2... 1... ";
 	
 	for (uint8_t i = 0; i < strlen(n); i++)
 	{
 		lcdWriteChar(n[i]);
-		_delay_ms(1000);
+		
+		if(i % 5 == 4)
+			_delay_ms(600);
+		else
+			_delay_ms(100);
 	}
 	
 	_delay_ms(500);
@@ -126,7 +130,7 @@ void endTesting()
 	for (int i = 0; i < 10; i++)
 	{
 		lcdSetInvert(!lcdGetInvert());
-		_delay_ms(2000);
+		_delay_ms(200);
 	}
 	
 	int c = (lcdGetMaxCols() - strlen("Tests Completed!")) / 2;
@@ -155,25 +159,25 @@ int main(void)
 
 	beginTesting();
 	
-	// ADD THE NAME OF YOUR TEST TO THE ARRAY (PROCEEDED BY AMPERSAND)
-	void (*tests[])(void) = { &test1, &test2, &test3, &test4 };
-	
-	// YOU CAN CHANGE THE TEST_START_INDEX AND NUMBER_OF_TESTS ABOVE, IF YOU DON'T WANT TO RUN THROUGH ALL OF THEM
-	for (int i = TEST_START_INDEX; i < NUMBER_TO_RUN; i++)
-	{
-		// SET-UP METHOD IS CALLED BEFORE EACH TEST; IF YOU WANT TO CHANGE THE SCREEN-FILL FOR THE TEST, YOU CAN DO SO ABOVE
-		setUp(fillForTest(i));
-		
-		void (*currentTest)(void) = tests[i];
-		currentTest();
-		
-		_delay_ms(1000);
-		
-		// TEAR-DOWN METHOD IS AUTOMATICALLY CALLED AFTER EACH TEST
-		tearDown();
-	}
-	
-	endTesting();
+	//// ADD THE NAME OF YOUR TEST TO THE ARRAY (PROCEEDED BY AMPERSAND)
+	//void (*tests[])(void) = { &test1, &test2, &test3, &test4 };
+	//
+	//// YOU CAN CHANGE THE TEST_START_INDEX AND NUMBER_OF_TESTS ABOVE, IF YOU DON'T WANT TO RUN THROUGH ALL OF THEM
+	//for (int i = TEST_START_INDEX; i < NUMBER_TO_RUN; i++)
+	//{
+		//// SET-UP METHOD IS CALLED BEFORE EACH TEST; IF YOU WANT TO CHANGE THE SCREEN-FILL FOR THE TEST, YOU CAN DO SO ABOVE
+		//setUp(fillForTest(i));
+		//
+		//void (*currentTest)(void) = tests[i];
+		//currentTest();
+		//
+		//_delay_ms(1000);
+		//
+		//// TEAR-DOWN METHOD IS AUTOMATICALLY CALLED AFTER EACH TEST
+		//tearDown();
+	//}
+	//
+	//endTesting();
 	
 	while (1)
 	{

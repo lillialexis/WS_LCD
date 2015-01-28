@@ -117,8 +117,14 @@ uint8_t   lcdGetMaxCols()  { return MAX_COLS; }
 uint8_t   lcdGetCurrentRow()  { return lcdRow; }
 uint8_t   lcdGetCurrentCol()  { return lcdColumn; }
 
+#define MIN(x, y) x < y ? x : y;
+#define MAX(x, y) x > y ? x : y;
+
 void lcdSetPos(uint8_t row, uint8_t column)
 {
+	row = MIN(row, MAX_ROWS);
+	column = MIN(column, LCD_WIDTH);
+	
 	twiStart();
 	twiSend(OLED_ADDRESS);
 	twiSendCmd(0xb0+row);
@@ -144,7 +150,7 @@ void lcdFill(uint8_t fillData)
 	for(m = 0; m <= MAX_ROWS; m++) {
 		twiStart();
 		twiSend(OLED_ADDRESS);
-		twiSendCmd(0xb0 + m);              // page0-page1
+		twiSendCmd(0xb0 + m);            // page0-page1
 		twiSendCmd(HIGH_COL_START_ADDR); // high column start address
 		twiSendCmd(LOW_COL_START_ADDR);  // low column start address
 		twiStop();
@@ -154,6 +160,41 @@ void lcdFill(uint8_t fillData)
 		twiSend(DATA_COMMAND);
 		for(n = 0; n < LCD_WIDTH; n++) {
 			twiSend(fillData);
+		}
+		twiStop();
+	}
+}
+
+void lcdFillChar(uint8_t fillData)
+{
+	uint8_t m,n;
+	for(m = 0; m <= MAX_ROWS; m++) {
+		twiStart();
+		twiSend(OLED_ADDRESS);
+		twiSendCmd(0xb0 + m);            // page0-page1
+		twiSendCmd(HIGH_COL_START_ADDR); // high column start address
+		twiSendCmd(LOW_COL_START_ADDR);  // low column start address
+		twiStop();
+		
+		twiStart();
+		twiSend(OLED_ADDRESS);
+		twiSend(DATA_COMMAND);
+		for(n = 0; n < LCD_WIDTH; n += SMALL_FONT_CHARACTER_W) { // no padding between characters at the moment
+			
+			if (fillData >= ASCII_OFFSET_LOW && fillData <= ASCII_OFFSET_HIGH) {
+				fillData -= ASCII_OFFSET_LOW; // offsets byte by 0x20, to beginning of ascii codes
+				for (uint8_t i = 0; i < SMALL_FONT_CHARACTER_W; i++) {
+					twiSend(pgm_read_byte(&font5x8[fillData][i])); // cycle through and send 5 bytes of char
+				}
+				//twiSend(0); // pad 6th byte because separation between char
+			}
+			
+			else { // send space for unknown char
+				for (uint8_t i = 0; i < SMALL_FONT_CHARACTER_W; i++) {
+					twiSend(pgm_read_byte(&unknown5x8[i])); // cycle through and send 5 bytes of the unknown char
+				}
+				//twiSend(0); // pad 6th byte because separation between char
+			}
 		}
 		twiStop();
 	}
@@ -205,24 +246,29 @@ void lcdWriteChar(uint8_t data)
 	twiSend(DATA_COMMAND); //move to lcdPrint
 	//******************************
 	
-	if (data > 0x20 && data <= 0x7f) {
-		data -= 0x21; //offsets byte by 0x21, to beginning of ascii codes
-		for (uint8_t i = 0; i < 5; i++) {
+	if (data >= ASCII_OFFSET_LOW && data <= ASCII_OFFSET_HIGH) {
+		data -= ASCII_OFFSET_LOW; // offsets byte by 0x20, to beginning of ascii codes
+		for (uint8_t i = 0; i < SMALL_FONT_CHARACTER_W; i++) {
 			twiSend(pgm_read_byte(&font5x8[data][i])); //cycle through and send 5 bytes of char
 		}
 		twiSend(0); //pad 6th byte because separation between char
+		
+		lcdColumn += SMALL_FONT_CHARACTER_W + H_PADDING;
 	} 
 	else if (data == '\n') {
 		lcdRow++;
-		lcdSetPos(lcdRow, 0);
-		return;
+		lcdColumn = 0;
+		
+		lcdSetPos(lcdRow, lcdColumn);
 	}
 	else { //send space for unknown char
-		for (uint8_t i = 0; i < 6; i++) {
-			twiSend(0);
+		for (uint8_t i = 0; i < SMALL_FONT_CHARACTER_W; i++) {
+			twiSend(pgm_read_byte(&unknown5x8[i])); //cycle through and send 5 bytes of the unknown char
 		}
+		twiSend(0); //pad 6th byte because separation between char
+	
+		lcdColumn += SMALL_FONT_CHARACTER_W + H_PADDING;
 	}
-	lcdColumn += 6;
 	
 	if (lcdColumn >= MAX_COLS) {
 		lcdColumn = 0;
@@ -237,8 +283,6 @@ void lcdWriteChar(uint8_t data)
 	twiStop();  //move to lcdPrint
 	//******************************
 }
-
-#define MIN(x, y) x < y ? x : y;
 
 void lcdPrint(const char data[18]) 
 {
