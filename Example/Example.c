@@ -18,6 +18,8 @@
 
 #include "../WS_LCD/WS_LCD.h"
 
+
+#define TO_MS(sec) sec * 1000
 // TO USE:
 // 1. Add a test method; you can call it whatever.
 // 2. Add a pointer to your method at the end of the tests[] array in the main() method {..., &<name_of_method>};
@@ -29,7 +31,9 @@
 
 // MAKE SURE YOU UPDATE THESE SO THAT THE LOOP CALLS YOUR NEWLY ADDED TEST
 #define TEST_START_INDEX 0
-#define NUMBER_TO_RUN    4
+#define NUMBER_TO_RUN    2//4
+#define TEST_DELAY       TO_MS(3)
+
 
 // YOU CAN ADD MORE TESTS HERE
 void exampleTest()
@@ -37,40 +41,82 @@ void exampleTest()
 	
 }
 
-void test1()
+void test_lcdFill()
 {
-	lcdSetInvert(TRUE);
+	uint8_t fills[] = { 0x01,   // ? ? ? ?  ? ? ? ?  
+   					    0x04,   // ? ? ? ?  ? ? ? ?
+   					    0x10,   // ? ? ? ?  ? ? ? ?
+   					    0x20,   // ? ? ? ?  ? ? ? ?
+   					    0xAA,   // ? ? ? ?  ? ? ? ?
+   					    0x55,   // ? ? ? ?  ? ? ? ? 
+   					    0xff,   // ? ? ? ?  ? ? ? ? 
+   					    0x00 }; // ? ? ? ?  ? ? ? ? 
 	
+	for (uint8_t i = 0; i < 8; i++)
+	{
+		lcdFill(fills[i]);
+		
+		_delay_ms(500);	
+	}	
+}
+
+void test_lcdFillChar()
+{
+	uint8_t fills[] = { 0x00,
+						' ',
+						'+',
+						0x23,
+						"x" };
+	
+	for (uint8_t i = 0; i < 5; i++)
+	{
+		lcdFillChar(fills[i]);
+		
+		_delay_ms(3000);
+	}
+}
+
+void test_lcdPrintln_noWrap() // Test print line only to max rows
+{
 	lcdSetPos(0, 0);
-	lcdPrintln("Hello world,");
-	lcdPrintln("Muthafuckas!!!");
-	lcdPrintln("Hello world,");
-	lcdPrintln("1fdafasfasf");
+
+	lcdPrintln("1");
 	lcdPrintln("2");
 	lcdPrintln("3");
-	lcdPrintln("4fdafasfasfasf");
+	lcdPrintln("4");
 	lcdPrintln("5");
-	lcdPrintln("6fdafsa");
-	lcdPrintln("7fda");
-	lcdPrintln("8fdsa");
+	lcdPrintln("6");
+	lcdPrintln("7");
+	lcdPrintln("8");
+}
+
+void test_lcdPrintln_wrap()
+{
+	lcdSetInvert(TRUE);
+		
+	lcdSetPos(0, 0);
+
+	lcdPrintln("1");
+	lcdPrintln("2");
+	lcdPrintln("3");
+	lcdPrintln("4");
+	lcdPrintln("5");
+	lcdPrintln("6");
+	lcdPrintln("7");
+	lcdPrintln("8");
 	lcdPrintln("9");
 	lcdPrintln("10");
 	lcdPrintln("11");
-	
+		
 	//lcdClearLine(0);
 	//lcdClearLine(5);
 	//lcdSetPos(5, 5);
-	
+		
 	//uint8_t r = lcdGetCurrentRow() + 15;
 	//uint8_t c = lcdGetCurrentCol() + 15;
 	//
 	//lcdWriteChar(r);
 	//lcdWriteChar(c);
-}
-
-void test2()
-{
-	
 }
 
 void test3()
@@ -83,14 +129,38 @@ void test4()
 	
 }
 
-void setUp(uint8_t fill)
+// ADD THE NAME OF YOUR TEST TO THE ARRAY (PROCEEDED BY AMPERSAND)
+void (*tests[])(void) = { &test_lcdFill, &test_lcdFillChar, &test_lcdPrintln_noWrap, &test_lcdPrintln_wrap, &test3, &test4 };
+
+void setUp()//uint8_t fill)
 {
-	lcdFillChar(fill);
+	lcdClearScreen();
+	
+	int c = (lcdGetMaxCols() - strlen("Starting Test...")) / 2;
+	int r = lcdGetMaxRows() / 2;
+	
+	lcdSetPos(r, c);
+	lcdPrintln("Starting Test...");
+	
+	_delay_ms(1500);
+	
+	lcdClearScreen();
+	lcdSetPos(0, 0);
 }
 
 void tearDown()
 {
 	lcdClearScreen();
+	
+	int c = (lcdGetMaxCols() - strlen("Test Completed...")) / 2;
+	int r = lcdGetMaxRows() / 2;
+	
+	lcdSetPos(r, c);
+	lcdPrintln("Test Complete...");
+	
+	//_delay_ms(1500);
+	//
+	//lcdClearScreen();
 }
 
 void beginTesting()
@@ -112,7 +182,7 @@ void beginTesting()
 	{
 		lcdWriteChar(n[i]);
 		
-		if(i % 5 == 4)
+		if (i % 5 == 4)
 			_delay_ms(600);
 		else
 			_delay_ms(100);
@@ -127,10 +197,10 @@ void endTesting()
 	
 	if (lcdGetInvert()) lcdSetInvert(FALSE);
 	
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 6; i++)
 	{
 		lcdSetInvert(!lcdGetInvert());
-		_delay_ms(200);
+		_delay_ms(150);
 	}
 	
 	int c = (lcdGetMaxCols() - strlen("Tests Completed!")) / 2;
@@ -140,17 +210,17 @@ void endTesting()
 	lcdPrintln("Tests Completed!");
 }
 
-uint8_t fillForTest(int testNum)
-{
-	switch (testNum)
-	{
-		case 0: return '1';
-		case 1: return '2';
-		case 2: return '3';
-		case 3: return '4';
-		default: return '+';
-	}
-}
+//uint8_t fillForTest(int testNum)
+//{
+	//switch (testNum)
+	//{
+		//case 0: return '1';
+		//case 1: return '2';
+		//case 2: return '3';
+		//case 3: return '4';
+		//default: return '+';
+	//}
+//}
 
 int main(void)
 {
@@ -161,23 +231,23 @@ int main(void)
 	
 	//// ADD THE NAME OF YOUR TEST TO THE ARRAY (PROCEEDED BY AMPERSAND)
 	//void (*tests[])(void) = { &test1, &test2, &test3, &test4 };
-	//
-	//// YOU CAN CHANGE THE TEST_START_INDEX AND NUMBER_OF_TESTS ABOVE, IF YOU DON'T WANT TO RUN THROUGH ALL OF THEM
-	//for (int i = TEST_START_INDEX; i < NUMBER_TO_RUN; i++)
-	//{
-		//// SET-UP METHOD IS CALLED BEFORE EACH TEST; IF YOU WANT TO CHANGE THE SCREEN-FILL FOR THE TEST, YOU CAN DO SO ABOVE
-		//setUp(fillForTest(i));
-		//
-		//void (*currentTest)(void) = tests[i];
-		//currentTest();
-		//
-		//_delay_ms(1000);
-		//
-		//// TEAR-DOWN METHOD IS AUTOMATICALLY CALLED AFTER EACH TEST
-		//tearDown();
-	//}
-	//
-	//endTesting();
+	
+	// YOU CAN CHANGE THE TEST_START_INDEX AND NUMBER_OF_TESTS ABOVE, IF YOU DON'T WANT TO RUN THROUGH ALL OF THEM
+	for (int i = TEST_START_INDEX; i < NUMBER_TO_RUN; i++)
+	{
+		// SET-UP METHOD IS CALLED BEFORE EACH TEST; IF YOU WANT TO CHANGE THE SCREEN-FILL FOR THE TEST, YOU CAN DO SO ABOVE
+		setUp();//fillForTest(i));
+		
+		void (*currentTest)(void) = tests[i];
+		currentTest();
+				
+		// TEAR-DOWN METHOD IS AUTOMATICALLY CALLED AFTER EACH TEST
+		tearDown();
+	
+		_delay_ms(TEST_DELAY);
+	}
+	
+	endTesting();
 	
 	while (1)
 	{

@@ -172,3 +172,5 @@ const PROGMEM uint8_t font5x8[][5] = {
 const PROGMEM uint8_t unknown5x8[5] = { 0x7f, 0x41, 0x41, 0x41, 0x7f }; // []
 	
 #endif /* LCDCONSTANTS_H_ */
+
+
