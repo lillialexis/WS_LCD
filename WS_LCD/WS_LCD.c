@@ -204,36 +204,20 @@ void lcdClearLine(uint8_t line)
 {
 	if (line >= MAX_ROWS) return;
 	
-	twiSendCmd(LOW_COL_START_ADDR  | 0x0); // low col = 0
-	twiSendCmd(HIGH_COL_START_ADDR | 0x0); // hi col = 0
-	twiSendCmd(DISPLAY_START_LINE  | 0x0); // line #0
-
-// SSD1306.cpp weird two-wire stuff
-//#ifdef TWBR
-	//uint8_t twbrbackup = TWBR;
-	//TWBR = 18; // upgrade to 400KHz!
-//#endif
-
-	// send a bunch of data in one xmission
-	twiSendCmd(0xB0 + line);         // set page address
-	twiSendCmd(LOW_COL_START_ADDR);  // set lower column address
-	twiSendCmd(HIGH_COL_START_ADDR); // set higher column address
-
-	for(uint8_t j = 0; j < 8; j++) {
-		
-		twiStart();
-		twiSend(OLED_ADDRESS);
-		twiSend(DATA_COMMAND);
-		
-		for (uint8_t k = 0; k < 16; k++) {
-			twiSend(0);
-		}
-		twiStop();
+	twiStart();
+	twiSend(OLED_ADDRESS);
+	twiSendCmd(0xb0 + line);         // page0-page1
+	twiSendCmd(HIGH_COL_START_ADDR); // high column start address
+	twiSendCmd(LOW_COL_START_ADDR);  // low column start address
+	twiStop();
+			
+	twiStart();
+	twiSend(OLED_ADDRESS);
+	twiSend(DATA_COMMAND);
+	for(int n = 0; n < LCD_WIDTH; n++) {
+		twiSend(0);
 	}
-	
-//#ifdef TWBR
-	//TWBR = twbrbackup;
-//#endif
+	twiStop();
 }
 
 void lcdClearScreen()
@@ -287,22 +271,22 @@ void lcdWriteChar(uint8_t data)
 	//******************************
 }
 
-void lcdPrint(const char data[18]) 
+void lcdPrint(uint8_t *buffer)
 {
 	uint8_t i = 0;
-	uint8_t len = strlen(data);
+	uint8_t len = strlen(buffer);
 	
-	len = MIN(len, 18); 
+	//len = MIN(len, 18); 
 	
 	while (i < len) { 
-		lcdWriteChar(data[i]); 
+		lcdWriteChar(buffer[i]); 
 		i++; 
 	}
 }
 
-void lcdPrintln(const char data[18]) 
+void lcdPrintln(uint8_t *buffer)
 {
-	lcdPrint(data);
+	lcdPrint(buffer);
 	lcdWriteChar('\n');
 }
 

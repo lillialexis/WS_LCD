@@ -67,13 +67,12 @@
 	BOOL lcdGetInvert();
 		
 	void lcdFill(uint8_t fillData);
-	//void lcdFillChar(uint8_t fillData); <- TODO: Buggy, fix later
 	
 	void lcdClearLine(uint8_t line);
 	void lcdClearScreen();	
 
-	void lcdPrintln(const char data[18]);
-	void lcdPrint(const char data[18]);
+	void lcdPrintln(uint8_t *buffer);
+	void lcdPrint(uint8_t *buffer);
 
 	void lcdWriteChar(uint8_t data);
 	void lcdWriteDigit(uint8_t n);

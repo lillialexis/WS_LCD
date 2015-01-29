@@ -24,13 +24,11 @@
 // 2. Add a pointer to your method at the end of the tests[] array in the main() method {..., &<name_of_method>};
 // 3. Update the starting index TEST_START_INDEX to the index of the first test you want to run (default is 0)
 // 4. Update the number of tests to run NUMBER_TO_RUN to run that many tests (default is max number of tests)
-// 5. If you want to add a fill for your method, you can do so in the fillForTest() method. (Note: the fill is based 
-//        off of the index of the test method in the array; changing which tests are run will change which fills are used)
-// 6. Run the example
+// 5. Run the example
 
 // MAKE SURE YOU UPDATE THESE SO THAT THE LOOP CALLS YOUR NEWLY ADDED TEST
-#define TEST_START_INDEX 2
-#define NUMBER_TO_RUN    1
+#define TEST_START_INDEX 4
+#define NUMBER_TO_RUN    2
 #define TEST_DELAY       3000
 
 
@@ -58,28 +56,6 @@ void test_lcdFill()
 		_delay_ms(500);	
 	}	
 }
-
-//void test_lcdFillChar()
-//{
-	//lcdFillChar(0x00);	
-	//_delay_ms(3000);
-	//
-	//lcdFillChar("X");
-	//_delay_ms(3000);
-	//
-	////uint8_t fills[] = { 0x00,
-						////' ',
-						////'+',
-						////0x23,
-						////"x" };
-	////
-	////for (uint8_t i = 0; i < 5; i++)
-	////{
-		////lcdFillChar(fills[i]);
-		////
-		////_delay_ms(3000);
-	////}
-//}
 
 void test_lcdPrintln_noWrap() // Test print line only to max rows
 {
@@ -116,16 +92,6 @@ void test_lcdPrintln_wrap()
 	lcdPrintln("11");
 		
 	_delay_ms(5000);
-	
-	//lcdClearLine(0);
-	//lcdClearLine(5);
-	//lcdSetPos(5, 5);
-		
-	//uint8_t r = lcdGetCurrentRow() + 15;
-	//uint8_t c = lcdGetCurrentCol() + 15;
-	//
-	//lcdWriteChar(r);
-	//lcdWriteChar(c);
 }
 
 void test_lcdClearLine()
@@ -140,7 +106,10 @@ void test_lcdClearLine()
 
 	lcdClearLine(4);
 	_delay_ms(1000);
-
+	
+	lcdClearLine(6);
+	_delay_ms(1000);
+	
 	lcdClearLine(8);
 	_delay_ms(1000);
 	
@@ -160,15 +129,22 @@ void test_lcdClearLine()
 	_delay_ms(300);
 }
 
-void test4()
+void test_lcdPrint_wrapLine()
 {
-	
+	lcdPrint("012345678901234567890123456789");
+	_delay_ms(5000);	
+}
+
+void test_lcdPrint_wrapScreen()
+{
+	lcdPrint("1aaaaaaaaaaaaaaaaaaaaA2bbbbbbbbbbbbbbbbbbbbB3ccccccccccccccccccccC4ddddddddddddddddddddD5eeeeeeeeeeeeeeeeeeeeE6ffffffffffffffffffffF7ggggggggggggggggggggG8hhhhhhhhhhhhhhhhhhhhH9xxxxxxxxxxxxxx");
+	_delay_ms(5000);
 }
 
 // ADD THE NAME OF YOUR TEST TO THE ARRAY (PROCEEDED BY AMPERSAND)
-void (*tests[])(void) = { &test_lcdFill, &test_lcdPrintln_noWrap, &test_lcdPrintln_wrap, &test_lcdClearLine, &test4 };
+void (*tests[])(void) = { &test_lcdFill, &test_lcdPrintln_noWrap, &test_lcdPrintln_wrap, &test_lcdClearLine, &test_lcdPrint_wrapLine, &test_lcdPrint_wrapScreen };
 
-void setUp()//uint8_t fill)
+void setUp()
 {
 	lcdClearScreen();
 	
@@ -178,7 +154,7 @@ void setUp()//uint8_t fill)
 	lcdSetPos(r, c);
 	lcdPrintln("Starting Test...");
 	
-	_delay_ms(1500);
+	_delay_ms(1000);
 	
 	lcdClearScreen();
 	lcdSetPos(0, 0);
@@ -196,9 +172,7 @@ void tearDown()
 	lcdSetPos(r, c);
 	lcdPrintln("Test Complete...");
 	
-	//_delay_ms(1500);
-	//
-	//lcdClearScreen();
+	_delay_ms(TEST_DELAY);
 }
 
 void beginTesting()
@@ -248,18 +222,6 @@ void endTesting()
 	lcdPrintln("Tests Completed!");
 }
 
-//uint8_t fillForTest(int testNum)
-//{
-	//switch (testNum)
-	//{
-		//case 0: return '1';
-		//case 1: return '2';
-		//case 2: return '3';
-		//case 3: return '4';
-		//default: return '+';
-	//}
-//}
-
 int main(void)
 {
 	//// Time to activate the debug terminal
@@ -267,22 +229,17 @@ int main(void)
 
 	beginTesting();
 	
-	//// ADD THE NAME OF YOUR TEST TO THE ARRAY (PROCEEDED BY AMPERSAND)
-	//void (*tests[])(void) = { &test1, &test2, &test3, &test4 };
-	
 	// YOU CAN CHANGE THE TEST_START_INDEX AND NUMBER_OF_TESTS ABOVE, IF YOU DON'T WANT TO RUN THROUGH ALL OF THEM
 	for (int i = TEST_START_INDEX; i < TEST_START_INDEX + NUMBER_TO_RUN; i++)
 	{
 		// SET-UP METHOD IS CALLED BEFORE EACH TEST; IF YOU WANT TO CHANGE THE SCREEN-FILL FOR THE TEST, YOU CAN DO SO ABOVE
-		setUp();//fillForTest(i));
+		setUp();
 		
 		void (*currentTest)(void) = tests[i];
 		currentTest();
 				
 		// TEAR-DOWN METHOD IS AUTOMATICALLY CALLED AFTER EACH TEST
 		tearDown();
-	
-		_delay_ms(TEST_DELAY);
 	}
 	
 	endTesting();
