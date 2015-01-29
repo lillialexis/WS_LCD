@@ -67,7 +67,7 @@
 	BOOL lcdGetInvert();
 		
 	void lcdFill(uint8_t fillData);
-	void lcdFillChar(uint8_t fillData);
+	//void lcdFillChar(uint8_t fillData); <- TODO: Buggy, fix later
 	
 	void lcdClearLine(uint8_t line);
 	void lcdClearScreen();	

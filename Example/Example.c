@@ -19,7 +19,6 @@
 #include "../WS_LCD/WS_LCD.h"
 
 
-#define TO_MS(sec) sec * 1000
 // TO USE:
 // 1. Add a test method; you can call it whatever.
 // 2. Add a pointer to your method at the end of the tests[] array in the main() method {..., &<name_of_method>};
@@ -30,9 +29,9 @@
 // 6. Run the example
 
 // MAKE SURE YOU UPDATE THESE SO THAT THE LOOP CALLS YOUR NEWLY ADDED TEST
-#define TEST_START_INDEX 0
-#define NUMBER_TO_RUN    2//4
-#define TEST_DELAY       TO_MS(3)
+#define TEST_START_INDEX 2
+#define NUMBER_TO_RUN    1
+#define TEST_DELAY       3000
 
 
 // YOU CAN ADD MORE TESTS HERE
@@ -60,21 +59,27 @@ void test_lcdFill()
 	}	
 }
 
-void test_lcdFillChar()
-{
-	uint8_t fills[] = { 0x00,
-						' ',
-						'+',
-						0x23,
-						"x" };
-	
-	for (uint8_t i = 0; i < 5; i++)
-	{
-		lcdFillChar(fills[i]);
-		
-		_delay_ms(3000);
-	}
-}
+//void test_lcdFillChar()
+//{
+	//lcdFillChar(0x00);	
+	//_delay_ms(3000);
+	//
+	//lcdFillChar("X");
+	//_delay_ms(3000);
+	//
+	////uint8_t fills[] = { 0x00,
+						////' ',
+						////'+',
+						////0x23,
+						////"x" };
+	////
+	////for (uint8_t i = 0; i < 5; i++)
+	////{
+		////lcdFillChar(fills[i]);
+		////
+		////_delay_ms(3000);
+	////}
+//}
 
 void test_lcdPrintln_noWrap() // Test print line only to max rows
 {
@@ -88,6 +93,8 @@ void test_lcdPrintln_noWrap() // Test print line only to max rows
 	lcdPrintln("6");
 	lcdPrintln("7");
 	lcdPrintln("8");
+	
+	_delay_ms(5000);
 }
 
 void test_lcdPrintln_wrap()
@@ -108,6 +115,8 @@ void test_lcdPrintln_wrap()
 	lcdPrintln("10");
 	lcdPrintln("11");
 		
+	_delay_ms(5000);
+	
 	//lcdClearLine(0);
 	//lcdClearLine(5);
 	//lcdSetPos(5, 5);
@@ -119,9 +128,36 @@ void test_lcdPrintln_wrap()
 	//lcdWriteChar(c);
 }
 
-void test3()
+void test_lcdClearLine()
 {
+	lcdFill(0xff);
 	
+	lcdClearLine(0);
+	_delay_ms(1000);
+	
+	lcdClearLine(2);
+	_delay_ms(1000);
+
+	lcdClearLine(4);
+	_delay_ms(1000);
+
+	lcdClearLine(8);
+	_delay_ms(1000);
+	
+	lcdClearLine(100);
+	_delay_ms(1000);
+	
+	lcdClearLine(7);		
+	_delay_ms(300);
+
+	lcdClearLine(5);
+	_delay_ms(300);
+
+	lcdClearLine(3);
+	_delay_ms(300);
+
+	lcdClearLine(1);
+	_delay_ms(300);
 }
 
 void test4()
@@ -130,7 +166,7 @@ void test4()
 }
 
 // ADD THE NAME OF YOUR TEST TO THE ARRAY (PROCEEDED BY AMPERSAND)
-void (*tests[])(void) = { &test_lcdFill, &test_lcdFillChar, &test_lcdPrintln_noWrap, &test_lcdPrintln_wrap, &test3, &test4 };
+void (*tests[])(void) = { &test_lcdFill, &test_lcdPrintln_noWrap, &test_lcdPrintln_wrap, &test_lcdClearLine, &test4 };
 
 void setUp()//uint8_t fill)
 {
@@ -150,6 +186,8 @@ void setUp()//uint8_t fill)
 
 void tearDown()
 {
+	if (lcdGetInvert()) lcdSetInvert(FALSE);
+	
 	lcdClearScreen();
 	
 	int c = (lcdGetMaxCols() - strlen("Test Completed...")) / 2;
@@ -233,7 +271,7 @@ int main(void)
 	//void (*tests[])(void) = { &test1, &test2, &test3, &test4 };
 	
 	// YOU CAN CHANGE THE TEST_START_INDEX AND NUMBER_OF_TESTS ABOVE, IF YOU DON'T WANT TO RUN THROUGH ALL OF THEM
-	for (int i = TEST_START_INDEX; i < NUMBER_TO_RUN; i++)
+	for (int i = TEST_START_INDEX; i < TEST_START_INDEX + NUMBER_TO_RUN; i++)
 	{
 		// SET-UP METHOD IS CALLED BEFORE EACH TEST; IF YOU WANT TO CHANGE THE SCREEN-FILL FOR THE TEST, YOU CAN DO SO ABOVE
 		setUp();//fillForTest(i));
