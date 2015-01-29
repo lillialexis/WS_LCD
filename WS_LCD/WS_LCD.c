@@ -144,7 +144,7 @@ void lcdSetInvert(BOOL invert)
 
 BOOL lcdGetInvert() { return lcdInvert; }
 	
-void lcdFill(uint8_t fillData)
+void lcdFill(char fillData)
 {
 	uint8_t m,n;
 	for(m = 0; m <= MAX_ROWS; m++) {
@@ -226,7 +226,7 @@ void lcdClearScreen()
 	lcdSetPos(0, 0);
 }
 
-void lcdWriteChar(uint8_t data)
+void lcdWriteChar(char data)
 {	//******************************
 	twiStart();  //move to lcdPrint
 	twiSend(OLED_ADDRESS);  //move to lcdPrint
@@ -271,12 +271,10 @@ void lcdWriteChar(uint8_t data)
 	//******************************
 }
 
-void lcdPrint(uint8_t *buffer)
+void lcdPrint(char *buffer)
 {
 	uint8_t i = 0;
 	uint8_t len = strlen(buffer);
-	
-	//len = MIN(len, 18); 
 	
 	while (i < len) { 
 		lcdWriteChar(buffer[i]); 
@@ -284,12 +282,23 @@ void lcdPrint(uint8_t *buffer)
 	}
 }
 
-void lcdPrintln(uint8_t *buffer)
+void lcdPrintln(char *buffer)
 {
 	lcdPrint(buffer);
 	lcdWriteChar('\n');
 }
 
+void lcdPrint_P(const PROGMEM char *buffer)
+{
+	while (pgm_read_byte(buffer) != 0x00)
+		lcdWriteChar(pgm_read_byte(buffer++));
+}
+
+void lcdPrintln_P(const PROGMEM char *buffer)
+{
+	lcdPrint_P(buffer);
+	lcdWriteChar('\n');
+}
 
 //void lcdWriteDigit(byte n)
 //{

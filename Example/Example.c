@@ -27,7 +27,7 @@
 // 5. Run the example
 
 // MAKE SURE YOU UPDATE THESE SO THAT THE LOOP CALLS YOUR NEWLY ADDED TEST
-#define TEST_START_INDEX 4
+#define TEST_START_INDEX 6
 #define NUMBER_TO_RUN    2
 #define TEST_DELAY       3000
 
@@ -141,8 +141,47 @@ void test_lcdPrint_wrapScreen()
 	_delay_ms(5000);
 }
 
+char const FlashString[] PROGMEM = "This is a string held completely in flash memory.";
+void test_lcdPrint_P()
+{
+	lcdPrint_P(PSTR("This is a PROGMEM String. "));
+	lcdPrint_P(PSTR("This is too. "));
+	lcdPrint_P(FlashString);
+	
+	_delay_ms(3000);
+}
+
+void test_lcdPrintln_P()
+{
+	lcdPrintln_P(FlashString);
+	lcdPrintln_P(PSTR("This is too. "));
+	lcdPrintln_P(PSTR("This is a PROGMEM String. "));
+	
+	_delay_ms(3000);
+}
+
+void test_sizes()
+{
+	if (sizeof(char) > sizeof(uint8_t))
+		lcdPrint("char is bigger");
+	else if (sizeof(char) == sizeof(uint8_t))
+		lcdPrint("char is same");
+	else
+		lcdPrint("char is smaller");
+		
+	_delay_ms(2000);
+}
+
 // ADD THE NAME OF YOUR TEST TO THE ARRAY (PROCEEDED BY AMPERSAND)
-void (*tests[])(void) = { &test_lcdFill, &test_lcdPrintln_noWrap, &test_lcdPrintln_wrap, &test_lcdClearLine, &test_lcdPrint_wrapLine, &test_lcdPrint_wrapScreen };
+void (*tests[])(void) = { &test_lcdFill, 
+						  &test_lcdPrintln_noWrap, 
+						  &test_lcdPrintln_wrap, 
+						  &test_lcdClearLine,
+						  &test_lcdPrint_wrapLine, 
+						  &test_lcdPrint_wrapScreen, 
+						  &test_lcdPrint_P,
+						  &test_lcdPrintln_P,
+						  &test_sizes };
 
 void setUp()
 {

@@ -66,15 +66,18 @@
 	void lcdSetInvert(BOOL invert);
 	BOOL lcdGetInvert();
 		
-	void lcdFill(uint8_t fillData);
+	void lcdFill(char fillData);
 	
 	void lcdClearLine(uint8_t line);
 	void lcdClearScreen();	
 
-	void lcdPrintln(uint8_t *buffer);
-	void lcdPrint(uint8_t *buffer);
+	void lcdPrintln(char *buffer);
+	void lcdPrint(char *buffer);
 
-	void lcdWriteChar(uint8_t data);
+	void lcdPrintln_P(const PROGMEM char *buffer);
+	void lcdPrint_P(const PROGMEM char *buffer);
+
+	void lcdWriteChar(char data);
 	void lcdWriteDigit(uint8_t n);
 	void lcdWriteInt(uint16_t value, int8_t padding);// = -1);
 	void lcdWriteLong(uint32_t value, int8_t padding);// = -1);
