@@ -7,6 +7,7 @@
 
 // Header files
 #include <avr/io.h>
+#include <stdio.h>
 
 #define F_CPU 16000000UL
 
@@ -27,7 +28,7 @@
 // 5. Run the example
 
 // MAKE SURE YOU UPDATE THESE SO THAT THE LOOP CALLS YOUR NEWLY ADDED TEST
-#define TEST_START_INDEX 6
+#define TEST_START_INDEX 8
 #define NUMBER_TO_RUN    2
 #define TEST_DELAY       3000
 
@@ -160,6 +161,33 @@ void test_lcdPrintln_P()
 	_delay_ms(3000);
 }
 
+void test_sprintf()
+{
+	int i = 100;
+	
+	char foo[50];
+	
+	sprintf(foo, "decimal: %d", i);
+	lcdPrintln(foo);
+	
+	_delay_ms(3000);
+	
+}
+
+//char const decimalFS[] PROGMEM = "decimal: %d";
+void test_sprintf_P()
+{
+	int i = 100;
+	char foo[50];
+
+	sprintf_P(foo, PSTR("decimal: %d"), i);
+	
+	lcdPrintln(foo);
+	
+	_delay_ms(3000);
+	
+}
+
 void test_sizes()
 {
 	if (sizeof(char) > sizeof(uint8_t))
@@ -181,6 +209,8 @@ void (*tests[])(void) = { &test_lcdFill,
 						  &test_lcdPrint_wrapScreen, 
 						  &test_lcdPrint_P,
 						  &test_lcdPrintln_P,
+						  &test_sprintf,
+						  &test_sprintf_P,
 						  &test_sizes };
 
 void setUp()
