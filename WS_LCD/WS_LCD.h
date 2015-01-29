@@ -77,18 +77,13 @@
 	void lcdPrintln_P(const PROGMEM char *buffer);
 	void lcdPrint_P(const PROGMEM char *buffer);
 
-	void lcdWriteChar(char data);
-	void lcdWriteDigit(uint8_t n);
-	void lcdWriteInt(uint16_t value, int8_t padding);// = -1);
-	void lcdWriteLong(uint32_t value, int8_t padding);// = -1);
-
 	void lcdDraw(const PROGMEM uint8_t* buffer, uint8_t width, uint8_t height);
 	 
-	void lcdStartScrollRight(uint8_t start, uint8_t stop);
-	void lcdStartScrollLeft(uint8_t start, uint8_t stop);
-	 
-	void lcdStartScrollDiagRight(uint8_t start, uint8_t stop);
-	void lcdStartScrollDiagLeft(uint8_t start, uint8_t stop);
-	void lcdStopScroll(void);
+	//void lcdStartScrollRight(uint8_t start, uint8_t stop);
+	//void lcdStartScrollLeft(uint8_t start, uint8_t stop);
+	 //
+	//void lcdStartScrollDiagRight(uint8_t start, uint8_t stop);
+	//void lcdStartScrollDiagLeft(uint8_t start, uint8_t stop);
+	//void lcdStopScroll(void);
 
 #endif /* WS_LCD_H_ */

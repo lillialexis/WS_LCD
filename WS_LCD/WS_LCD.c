@@ -120,6 +120,12 @@ uint8_t   lcdGetCurrentCol()  { return lcdColumn; }
 #define MIN(x, y) x < y ? x : y;
 #define MAX(x, y) x > y ? x : y;
 
+void internal_lcdSetPos(uint8_t row, uint8_t column)
+{
+	
+	
+}
+
 void lcdSetPos(uint8_t row, uint8_t column)
 {
 	row = MIN(row, MAX_ROWS);
@@ -148,12 +154,14 @@ void lcdFill(char fillData)
 {
 	uint8_t m,n;
 	for(m = 0; m <= MAX_ROWS; m++) {
-		twiStart();
-		twiSend(OLED_ADDRESS);
-		twiSendCmd(0xb0 + m);            // page0-page1
-		twiSendCmd(HIGH_COL_START_ADDR); // high column start address
-		twiSendCmd(LOW_COL_START_ADDR);  // low column start address
-		twiStop();
+		//twiStart();
+		//twiSend(OLED_ADDRESS);
+		//twiSendCmd(0xb0 + m);            // page0-page1
+		//twiSendCmd(HIGH_COL_START_ADDR); // high column start address
+		//twiSendCmd(LOW_COL_START_ADDR);  // low column start address
+		//twiStop();
+		
+		lcdSetPos(m, 0);
 		
 		twiStart();
 		twiSend(OLED_ADDRESS);
@@ -165,51 +173,18 @@ void lcdFill(char fillData)
 	}
 }
 
-//void lcdFillChar(uint8_t fillData)
-//{
-	//uint8_t m,n;
-	//for(m = 0; m <= MAX_ROWS; m++) {
-		//twiStart();
-		//twiSend(OLED_ADDRESS);
-		//twiSendCmd(0xb0 + m);            // page0-page1
-		//twiSendCmd(HIGH_COL_START_ADDR); // high column start address
-		//twiSendCmd(LOW_COL_START_ADDR);  // low column start address
-		//twiStop();
-		//
-		//twiStart();
-		//twiSend(OLED_ADDRESS);
-		//twiSend(DATA_COMMAND);
-		//for(n = 0; n < LCD_WIDTH; n += SMALL_FONT_CHARACTER_W) { // no padding between characters at the moment
-			//
-			//if (fillData >= ASCII_OFFSET_LOW && fillData <= ASCII_OFFSET_HIGH) { 
-				//fillData -= ASCII_OFFSET_LOW; // offsets byte by 0x20, to beginning of ascii codes
-				//for (uint8_t i = 0; i < SMALL_FONT_CHARACTER_W; i++) {
-					//twiSend(pgm_read_byte(&font5x8[fillData][i])); // cycle through and send 5 bytes of char
-				//}
-				////twiSend(0); // pad 6th byte because separation between char
-			//}
-			//
-			//else { // send space for unknown char
-				//for (uint8_t i = 0; i < SMALL_FONT_CHARACTER_W; i++) {
-					//twiSend(pgm_read_byte(&unknown5x8[i])); // cycle through and send 5 bytes of the unknown char
-				//}
-				////twiSend(0); // pad 6th byte because separation between char
-			//}
-		//}
-		//twiStop();
-	//}
-//}
-
 void lcdClearLine(uint8_t line)
 {
 	if (line >= MAX_ROWS) return;
 	
-	twiStart();
-	twiSend(OLED_ADDRESS);
-	twiSendCmd(0xb0 + line);         // page0-page1
-	twiSendCmd(HIGH_COL_START_ADDR); // high column start address
-	twiSendCmd(LOW_COL_START_ADDR);  // low column start address
-	twiStop();
+	//twiStart();
+	//twiSend(OLED_ADDRESS);
+	//twiSendCmd(0xb0 + line);         // page0-page1
+	//twiSendCmd(HIGH_COL_START_ADDR); // high column start address
+	//twiSendCmd(LOW_COL_START_ADDR);  // low column start address
+	//twiStop();
+	
+	lcdSetPos(line, 0);
 			
 	twiStart();
 	twiSend(OLED_ADDRESS);
@@ -227,18 +202,17 @@ void lcdClearScreen()
 }
 
 void lcdWriteChar(char data)
-{	//******************************
-	twiStart();  //move to lcdPrint
-	twiSend(OLED_ADDRESS);  //move to lcdPrint
-	twiSend(DATA_COMMAND); //move to lcdPrint
-	//******************************
+{	
+	twiStart(); // maybe move these later to lcdprint, etc.
+	twiSend(OLED_ADDRESS); // maybe move these later to lcdprint, etc.
+	twiSend(DATA_COMMAND); // maybe move these later to lcdprint, etc.
 	
 	if (data >= ASCII_OFFSET_LOW && data <= ASCII_OFFSET_HIGH) {
 		data -= ASCII_OFFSET_LOW; // offsets byte by 0x20, to beginning of ascii codes
 		for (uint8_t i = 0; i < SMALL_FONT_CHARACTER_W; i++) {
-			twiSend(pgm_read_byte(&font5x8[data][i])); //cycle through and send 5 bytes of char
+			twiSend(pgm_read_byte(&font5x8[data][i])); // cycle through and send 5 bytes of char
 		}
-		twiSend(0); //pad 6th byte because separation between char
+		twiSend(0); // pad 6th byte because separation between char
 		
 		lcdColumn += SMALL_FONT_CHARACTER_W + H_PADDING;
 	} 
@@ -246,11 +220,11 @@ void lcdWriteChar(char data)
 		lcdRow++;
 		lcdColumn = 0;
 	}
-	else { //send space for unknown char
+	else { // send space for unknown char
 		for (uint8_t i = 0; i < SMALL_FONT_CHARACTER_W; i++) {
-			twiSend(pgm_read_byte(&unknown5x8[i])); //cycle through and send 5 bytes of the unknown char
+			twiSend(pgm_read_byte(&unknown5x8[i])); // cycle through and send 5 bytes of the unknown char
 		}
-		twiSend(0); //pad 6th byte because separation between char
+		twiSend(0); // pad 6th byte because separation between char
 	
 		lcdColumn += SMALL_FONT_CHARACTER_W + H_PADDING;
 	}
@@ -265,14 +239,16 @@ void lcdWriteChar(char data)
 	}
 	
 	lcdSetPos(lcdRow, lcdColumn);
-	
-	//******************************
-	twiStop();  //move to lcdPrint
-	//******************************
+
+	twiStop(); // maybe move these later to lcdprint, etc.
 }
 
 void lcdPrint(char *buffer)
 {
+	//twiStart();
+	//twiSend(OLED_ADDRESS);
+	//twiSend(DATA_COMMAND);
+	
 	uint8_t i = 0;
 	uint8_t len = strlen(buffer);
 	
@@ -280,6 +256,8 @@ void lcdPrint(char *buffer)
 		lcdWriteChar(buffer[i]); 
 		i++; 
 	}
+	
+	//twiStop();
 }
 
 void lcdPrintln(char *buffer)
@@ -290,8 +268,14 @@ void lcdPrintln(char *buffer)
 
 void lcdPrint_P(const PROGMEM char *buffer)
 {
+	//twiStart();
+	//twiSend(OLED_ADDRESS);
+	//twiSend(DATA_COMMAND);
+	
 	while (pgm_read_byte(buffer) != 0x00)
 		lcdWriteChar(pgm_read_byte(buffer++));
+		
+	//twiStop();
 }
 
 void lcdPrintln_P(const PROGMEM char *buffer)
@@ -299,202 +283,6 @@ void lcdPrintln_P(const PROGMEM char *buffer)
 	lcdPrint_P(buffer);
 	lcdWriteChar('\n');
 }
-
-//void lcdWriteDigit(byte n)
-//{
-	//#ifdef TWBR
-	//uint8_t twbrbackup = TWBR;
-	//TWBR = 18; // upgrade to 400KHz!
-	//#endif
-	//if (m_font == FONT_SIZE_SMALL) {
-		//Wire.beginTransmission(_i2caddr);
-		//Wire.write(0x40);
-		//if (n <= 9) {
-			//n += '0' - 0x21;
-			//for (byte i = 0; i < 5; i++) {
-				//Wire.write(pgm_read_byte(&font5x8[n][i]));
-			//}
-			//Wire.write(0);
-			//} else {
-			//for (byte i = 0; i < 6; i++) {
-				//Wire.write(0);
-			//}
-		//}
-		//Wire.endTransmission();
-		//m_col += 6;
-		//} else if (m_font == FONT_SIZE_MEDIUM) {
-		//write(n <= 9 ? ('0' + n) : ' ');
-		//#ifndef MEMORY_SAVING
-		//} else if (m_font == FONT_SIZE_LARGE) {
-		//if (n <= 9) {
-			//byte i;
-			//twiSendCmd(0xB0 + m_row);//set page address
-			//twiSendCmd(m_col & 0xf);//set lower column address
-			//twiSendCmd(0x10 | (m_col >> 4));//set higher column address
-//
-			//Wire.beginTransmission(_i2caddr);
-			//Wire.write(0x40);
-			//for (i = 0; i < 16; i ++) {
-				//byte d = pgm_read_byte(&digits16x16[n][i]);
-				//Wire.write(d);
-				//if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
-			//}
-			//Wire.endTransmission();
-//
-			//twiSendCmd(0xB0 + m_row + 1);//set page address
-			//twiSendCmd(m_col & 0xf);//set lower column address
-			//twiSendCmd(0x10 | (m_col >> 4));//set higher column address
-//
-			//Wire.beginTransmission(_i2caddr);
-			//Wire.write(0x40);
-			//for (; i < 32; i ++) {
-				//byte d = pgm_read_byte(&digits16x16[n][i]);
-				//Wire.write(d);
-				//if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
-			//}
-			//Wire.endTransmission();
-			//} else {
-			//twiSendCmd(0xB0 + m_row);//set page address
-			//twiSendCmd(m_col & 0xf);//set lower column address
-			//twiSendCmd(0x10 | (m_col >> 4));//set higher column address
-//
-			//Wire.beginTransmission(_i2caddr);
-			//Wire.write(0x40);
-			//for (byte i = (m_flags & FLAG_PIXEL_DOUBLE_H) ? 32 : 16; i > 0; i--) {
-				//Wire.write(0);
-			//}
-			//Wire.endTransmission();
-//
-			//twiSendCmd(0xB0 + m_row + 1);//set page address
-			//twiSendCmd(m_col & 0xf);//set lower column address
-			//twiSendCmd(0x10 | (m_col >> 4));//set higher column address
-//
-			//Wire.beginTransmission(_i2caddr);
-			//Wire.write(0x40);
-			//for (byte i = (m_flags & FLAG_PIXEL_DOUBLE_H) ? 32 : 16; i > 0; i--) {
-				//Wire.write(0);
-			//}
-			//Wire.endTransmission();
-		//}
-		//m_col += (m_flags & FLAG_PIXEL_DOUBLE_H) ? 30 : 16;
-		//#endif
-		//} else {
-		//if (n <= 9) {
-			//byte i;
-			//twiSendCmd(0xB0 + m_row);//set page address
-			//twiSendCmd(m_col & 0xf);//set lower column address
-			//twiSendCmd(0x10 | (m_col >> 4));//set higher column address
-//
-			//Wire.beginTransmission(_i2caddr);
-			//Wire.write(0x40);
-			//for (i = 0; i < 16; i ++) {
-				//byte d = pgm_read_byte(&digits16x24[n][i * 3]);
-				//Wire.write(d);
-				//if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
-			//}
-			//Wire.endTransmission();
-//
-			//twiSendCmd(0xB0 + m_row + 1);//set page address
-			//twiSendCmd(m_col & 0xf);//set lower column address
-			//twiSendCmd(0x10 | (m_col >> 4));//set higher column address
-//
-			//Wire.beginTransmission(_i2caddr);
-			//Wire.write(0x40);
-			//for (i = 0; i < 16; i ++) {
-				//byte d = pgm_read_byte(&digits16x24[n][i * 3 + 1]);
-				//Wire.write(d);
-				//if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
-			//}
-			//Wire.endTransmission();
-//
-			//twiSendCmd(0xB0 + m_row + 2);//set page address
-			//twiSendCmd(m_col & 0xf);//set lower column address
-			//twiSendCmd(0x10 | (m_col >> 4));//set higher column address
-//
-			//Wire.beginTransmission(_i2caddr);
-			//Wire.write(0x40);
-			//for (i = 0; i < 16; i ++) {
-				//byte d = pgm_read_byte(&digits16x24[n][i * 3 + 2]);
-				//Wire.write(d);
-				//if (m_flags & FLAG_PIXEL_DOUBLE_H) Wire.write(d);
-			//}
-			//Wire.endTransmission();
-			//} else {
-			//twiSendCmd(0xB0 + m_row);//set page address
-			//twiSendCmd(m_col & 0xf);//set lower column address
-			//twiSendCmd(0x10 | (m_col >> 4));//set higher column address
-//
-			//Wire.beginTransmission(_i2caddr);
-			//Wire.write(0x40);
-			//for (byte i = (m_flags & FLAG_PIXEL_DOUBLE_H) ? 32 : 16; i > 0; i--) {
-				//Wire.write(0);
-			//}
-			//Wire.endTransmission();
-//
-			//twiSendCmd(0xB0 + m_row + 1);//set page address
-			//twiSendCmd(m_col & 0xf);//set lower column address
-			//twiSendCmd(0x10 | (m_col >> 4));//set higher column address
-//
-			//Wire.beginTransmission(_i2caddr);
-			//Wire.write(0x40);
-			//for (byte i = (m_flags & FLAG_PIXEL_DOUBLE_H) ? 32 : 16; i > 0; i--) {
-				//Wire.write(0);
-			//}
-			//Wire.endTransmission();
-//
-			//twiSendCmd(0xB0 + m_row + 2);//set page address
-			//twiSendCmd(m_col & 0xf);//set lower column address
-			//twiSendCmd(0x10 | (m_col >> 4));//set higher column address
-//
-			//Wire.beginTransmission(_i2caddr);
-			//Wire.write(0x40);
-			//for (byte i = (m_flags & FLAG_PIXEL_DOUBLE_H) ? 32 : 16; i > 0; i--) {
-				//Wire.write(0);
-			//}
-			//Wire.endTransmission();
-		//}
-		//m_col += (m_flags & FLAG_PIXEL_DOUBLE_H) ? 30 : 16;
-	//}
-	//#ifdef TWBR
-	//TWBR = twbrbackup;
-	//#endif
-//}
-//
-//void lcdWriteInt(uint16_t value, int8_t padding)
-//{
-	//uint16_t den = 10000;
-	//for (int8_t i = 5; i > 0; i--) {
-		//byte v = (byte)(value / den);
-		//value -= v * den;
-		//den /= 10;
-		//if (v == 0 && padding && den) {
-			//if (padding >= i) {
-				//writeDigit((m_flags & FLAG_PAD_ZERO) ? 0 : -1);
-			//}
-			//continue;
-		//}
-		//padding = 0;
-		//writeDigit(v);
-	//}
-//}
-//
-//void lcdWriteLong(uint32_t value, int8_t padding)
-//{
-	//uint32_t den = 1000000000;
-	//for (int8_t i = 10; i > 0; i--) {
-		//byte v = (byte)(value / den);
-		//value -= v * den;
-		//den /= 10;
-		//if (v == 0 && padding && den) {
-			//if (padding >= i) {
-				//writeDigit((m_flags & FLAG_PAD_ZERO) ? 0 : -1);
-			//}
-			//continue;
-		//}
-		//padding = 0;
-		//writeDigit(v);
-	//}
-//}
 
 void lcdDraw(const PROGMEM uint8_t* buffer, uint8_t width, uint8_t height)
 {
@@ -505,12 +293,6 @@ void lcdDraw(const PROGMEM uint8_t* buffer, uint8_t width, uint8_t height)
 	const PROGMEM uint8_t *p = buffer;
 	height >>= 3;
 	width >>= 3;
-
-// SSD1306.cpp weird two-wire stuff
-//#ifdef TWBR
-	//uint8_t twbrbackup = TWBR;
-	//TWBR = 18; // upgrade to 400KHz!
-//#endif
 
 	for (uint8_t i = 0; i < height; i++) {
 		// send a bunch of data in one xmission
@@ -531,8 +313,4 @@ void lcdDraw(const PROGMEM uint8_t* buffer, uint8_t width, uint8_t height)
 	}
 	
 	lcdColumn += width;
-
-//#ifdef TWBR
-	//TWBR = twbrbackup;
-//#endif
 }

@@ -28,8 +28,8 @@
 // 5. Run the example
 
 // MAKE SURE YOU UPDATE THESE SO THAT THE LOOP CALLS YOUR NEWLY ADDED TEST
-#define TEST_START_INDEX 8
-#define NUMBER_TO_RUN    2
+#define TEST_START_INDEX 0
+#define NUMBER_TO_RUN    10
 #define TEST_DELAY       3000
 
 
@@ -165,27 +165,33 @@ void test_sprintf()
 {
 	int i = 100;
 	
-	char foo[50];
+	char dec[50];
+	char hex[50];
 	
-	sprintf(foo, "decimal: %d", i);
-	lcdPrintln(foo);
+	sprintf(dec, "dec: %d", i);
+	lcdPrintln(dec);
 	
-	_delay_ms(3000);
-	
+	sprintf(hex, "hex: 0x%x", i);
+	lcdPrintln(hex);
+
+	_delay_ms(3000);	
 }
 
-//char const decimalFS[] PROGMEM = "decimal: %d";
+char const hexFS[] PROGMEM = "hex: 0x%x";
 void test_sprintf_P()
 {
-	int i = 100;
-	char foo[50];
+	int i = 200;
+	
+	char dec[50];
+	char hex[50];
+	
+	sprintf_P(dec, PSTR("dec: %d"), i);
+	lcdPrintln(dec);
+	
+	sprintf_P(hex, hexFS, i);
+	lcdPrintln(hex);
 
-	sprintf_P(foo, PSTR("decimal: %d"), i);
-	
-	lcdPrintln(foo);
-	
 	_delay_ms(3000);
-	
 }
 
 void test_sizes()
