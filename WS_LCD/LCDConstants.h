@@ -11,13 +11,13 @@
 
 
 #ifndef LCD_RESOLUTION
-//#define LCD_RESOLUTION 9616
-#define LCD_RESOLUTION 12864
+#define LCD_RESOLUTION 9616
+//#define LCD_RESOLUTION 12864
 #endif
 
 // Oled config defs
 #define OLED_ADDRESS    0x78
-#define OLED_READ       oledAddress+1
+#define OLED_READ       OLED_ADDRESS+1
 #define OLED_RUN        0xa4
 #define OLED_OFF        0xa5
 #define OLED_INVERSE    0xa7

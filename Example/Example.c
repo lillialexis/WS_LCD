@@ -28,8 +28,8 @@
 // 5. Run the example
 
 // MAKE SURE YOU UPDATE THESE SO THAT THE LOOP CALLS YOUR NEWLY ADDED TEST
-#define TEST_START_INDEX 0
-#define NUMBER_TO_RUN    10
+#define TEST_START_INDEX 11
+#define NUMBER_TO_RUN    1
 #define TEST_DELAY       3000
 
 
@@ -205,7 +205,35 @@ void test_sizes()
 		
 	_delay_ms(2000);
 }
+void showTitle (char * useMenu(uint8_t), uint8_t pos)
+{
+	lcdClearLine(0);
+	lcdSetPos(0, 0);
+	lcdPrint_P(useMenu(pos));
+}
 
+char menuContent(uint8_t pos)
+{
+	if (pos == 1)              {return(PSTR("for some"));} //returns menu title
+	else if (pos == 2)              {return(PSTR("silly reason"));} //returns menu title
+	else if (pos == 3)              {return(PSTR("this has no "));} //returns menu title
+	else if (pos == 4)              {return(PSTR("problems"));} //returns menu title
+	else {return("");}
+}
+
+void test_jesses_problem (){
+	showTitle(menuContent, 1);
+	_delay_ms(1500);
+	showTitle(menuContent, 2);
+	_delay_ms(1500);
+	showTitle(menuContent, 3);
+	_delay_ms(1500);
+	showTitle(menuContent, 4);
+	_delay_ms(3000);
+}
+
+
+	
 // ADD THE NAME OF YOUR TEST TO THE ARRAY (PROCEEDED BY AMPERSAND)
 void (*tests[])(void) = { &test_lcdFill, 
 						  &test_lcdPrintln_noWrap, 
@@ -217,7 +245,8 @@ void (*tests[])(void) = { &test_lcdFill,
 						  &test_lcdPrintln_P,
 						  &test_sprintf,
 						  &test_sprintf_P,
-						  &test_sizes };
+						  &test_sizes, 
+						  &test_jesses_problem};
 
 void setUp()
 {

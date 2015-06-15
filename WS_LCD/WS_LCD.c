@@ -176,16 +176,7 @@ void lcdFill(char fillData)
 void lcdClearLine(uint8_t line)
 {
 	if (line >= MAX_ROWS) return;
-	
-	//twiStart();
-	//twiSend(OLED_ADDRESS);
-	//twiSendCmd(0xb0 + line);         // page0-page1
-	//twiSendCmd(HIGH_COL_START_ADDR); // high column start address
-	//twiSendCmd(LOW_COL_START_ADDR);  // low column start address
-	//twiStop();
-	
-	lcdSetPos(line, 0);
-			
+	lcdSetPos(line, 0);		
 	twiStart();
 	twiSend(OLED_ADDRESS);
 	twiSend(DATA_COMMAND);
@@ -193,6 +184,7 @@ void lcdClearLine(uint8_t line)
 		twiSend(0);
 	}
 	twiStop();
+	lcdSetPos(line, 0);
 }
 
 void lcdClearScreen()
@@ -313,4 +305,15 @@ void lcdDraw(const PROGMEM uint8_t* buffer, uint8_t width, uint8_t height)
 	}
 	
 	lcdColumn += width;
+}
+
+int a2i(char *s)
+{
+	int num=0;
+	while(*s)
+	{
+		num=((*s)-'0')+num*10;
+		s++;
+	}
+	return num;
 }

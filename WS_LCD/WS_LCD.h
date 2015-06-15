@@ -85,5 +85,6 @@
 	//void lcdStartScrollDiagRight(uint8_t start, uint8_t stop);
 	//void lcdStartScrollDiagLeft(uint8_t start, uint8_t stop);
 	//void lcdStopScroll(void);
+	int a2i(char *s);
 
 #endif /* WS_LCD_H_ */
