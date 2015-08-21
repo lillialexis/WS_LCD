@@ -71,9 +71,11 @@
 	void lcdClearLine(uint8_t line);
 	void lcdClearScreen();	
 
+	void lcdReplaceLine(uint8_t line, char *buffer);
 	void lcdPrintln(char *buffer);
 	void lcdPrint(char *buffer);
 
+	void lcdReplaceLine_P(uint8_t line, const PROGMEM char *buffer);
 	void lcdPrintln_P(const PROGMEM char *buffer);
 	void lcdPrint_P(const PROGMEM char *buffer);
 
