@@ -33,8 +33,8 @@
 
 #define HIGH_COL_START_ADDR 0x10
 #define LOW_COL_START_ADDR  0x00
-#define SEGMENT_REMAP      0xA1
-#define DISPLAY_START_LINE 0x40
+#define SEGMENT_REMAP       0xA1
+#define DISPLAY_START_LINE  0x40
 
 #if (LCD_RESOLUTION == 12864)
 	#define LCD_HEIGHT         64
