@@ -23,7 +23,7 @@ BOOL      lcdInvert   = OLED_NORMAL;
 void twiInit(void)
 {
 	TWSR = 0x00; //clears the prescaler (twps0 twps1) bits for F set
-	TWBR = 0x0c; //set SCL to 400kHz
+	TWBR = 0x32; //set SCL to 400kHz
 	TWCR = (1<<TWINT) | (1<<TWEN); //enable TWI should configure pins, reset flags
 }
 
@@ -258,6 +258,14 @@ void lcdPrintln(char *buffer)
 	lcdWriteChar('\n');
 }
 
+
+void lcdReplaceLine(uint8_t line, char *buffer)
+{
+	lcdClearLine(line);
+	lcdSetPos(line, 0);
+	lcdPrintln(buffer);
+}
+
 void lcdPrint_P(const PROGMEM char *buffer)
 {
 	//twiStart();
@@ -274,6 +282,13 @@ void lcdPrintln_P(const PROGMEM char *buffer)
 {
 	lcdPrint_P(buffer);
 	lcdWriteChar('\n');
+}
+
+void lcdReplaceLine_P(uint8_t line, const PROGMEM char *buffer)
+{
+	lcdClearLine(line);
+	lcdSetPos(line, 0);
+	lcdPrintln_P(buffer);
 }
 
 void lcdDraw(const PROGMEM uint8_t* buffer, uint8_t width, uint8_t height)
