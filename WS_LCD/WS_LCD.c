@@ -193,6 +193,22 @@ void lcdClearScreen()
 	lcdSetPos(0, 0);
 }
 
+void lcdDrawByte(uint8_t byte)
+{
+	twiStart();
+	twiSend(OLED_ADDRESS);
+	twiSend(DATA_COMMAND);
+
+	twiSend(byte);
+
+	twiStop();
+}
+
+void lcdDrawUpdateIndicator(uint8_t line, uint8_t indicator) {
+	lcdSetPos(line, LCD_WIDTH - 1);
+	lcdDrawByte(pgm_read_byte(&progressiveUpdateIndicators[indicator%4]));
+}
+
 void lcdWriteChar(char data)
 {	
 	twiStart(); // maybe move these later to lcdprint, etc.
@@ -258,12 +274,23 @@ void lcdPrintln(char *buffer)
 	lcdWriteChar('\n');
 }
 
-
 void lcdReplaceLine(uint8_t line, char *buffer)
 {
 	lcdClearLine(line);
 	lcdSetPos(line, 0);
 	lcdPrintln(buffer);
+}
+
+void lcdReplaceLineToggleInverse(uint8_t line, char *buffer)
+{
+	lcdSetInvert(!lcdInvert);
+	lcdReplaceLine(line, buffer);
+}
+
+void lcdReplaceLineUpdateIndicator(uint8_t line, char *buffer, uint8_t indicatorCount)
+{
+	lcdReplaceLine(line, buffer);
+	lcdDrawUpdateIndicator(line, indicatorCount);
 }
 
 void lcdPrint_P(const PROGMEM char *buffer)
@@ -289,6 +316,18 @@ void lcdReplaceLine_P(uint8_t line, const PROGMEM char *buffer)
 	lcdClearLine(line);
 	lcdSetPos(line, 0);
 	lcdPrintln_P(buffer);
+}
+
+void lcdReplaceLineToggleInverse_P(uint8_t line, const PROGMEM char *buffer)
+{
+	lcdSetInvert(!lcdInvert);
+	lcdReplaceLine_P(line, buffer);
+}
+
+void lcdReplaceLineUpdateIndicator_P(uint8_t line, const PROGMEM char *buffer, uint8_t indicatorCount)
+{
+	lcdReplaceLine_P(line, buffer);
+	lcdDrawUpdateIndicator(line, indicatorCount);
 }
 
 void lcdDraw(const PROGMEM uint8_t* buffer, uint8_t width, uint8_t height)

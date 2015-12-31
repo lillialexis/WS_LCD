@@ -71,16 +71,23 @@
 	void lcdClearLine(uint8_t line);
 	void lcdClearScreen();	
 
-	void lcdReplaceLine(uint8_t line, char *buffer);
-	void lcdPrintln(char *buffer);
+
 	void lcdPrint(char *buffer);
+	void lcdPrintln(char *buffer);
+	void lcdReplaceLine(uint8_t line, char *buffer);
+	void lcdReplaceLineToggleInverse(uint8_t line, char *buffer);
+	void lcdReplaceLineUpdateIndicator(uint8_t line, char *buffer, uint8_t indicatorCount);
 
-	void lcdReplaceLine_P(uint8_t line, const PROGMEM char *buffer);
-	void lcdPrintln_P(const PROGMEM char *buffer);
+
 	void lcdPrint_P(const PROGMEM char *buffer);
+	void lcdPrintln_P(const PROGMEM char *buffer);
+	void lcdReplaceLine_P(uint8_t line, const PROGMEM char *buffer);
+	void lcdReplaceLineToggleInverse_P(uint8_t line, const PROGMEM char *buffer);
+	void lcdReplaceLineUpdateIndicator_P(uint8_t line, const PROGMEM char *buffer, uint8_t indicatorCount);
 
+	void lcdDrawByte(uint8_t byte);
 	void lcdDraw(const PROGMEM uint8_t* buffer, uint8_t width, uint8_t height);
-	 
+
 	//void lcdStartScrollRight(uint8_t start, uint8_t stop);
 	//void lcdStartScrollLeft(uint8_t start, uint8_t stop);
 	 //
